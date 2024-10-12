@@ -17,6 +17,7 @@ module betting::betting {
         coefficient: u64,               // Real-valued coefficient for the bet
         expiry_time: u64,               // Expiry time of the bet as a timestamp
         payoff_time: u64,               // Payoff time as a timestamp
+        address_of_bet_creator: address
     }
 
     /// Function to create a new bet proposal
@@ -29,6 +30,7 @@ module betting::betting {
         coefficient: u64,
         expiry_time: u64,
         payoff_time: u64,
+        address_of_bet_creator: address
     ): BetProposal {
         // Ensure expiry time is in the future
         assert!(expiry_time > clock.timestamp_ms(), 1);
@@ -42,10 +44,12 @@ module betting::betting {
             stake,
             coefficient,
             expiry_time,
-            payoff_time
+            payoff_time,
+            address_of_bet_creator
         }
     }
 
+    
     /// Function to check if the bet proposal has expired
     public fun is_expired(clock: &Clock, bet: &BetProposal): bool {
         clock.timestamp_ms() > bet.expiry_time
@@ -54,5 +58,9 @@ module betting::betting {
     /// Function to check if it's time for the payoff
     public fun is_payoff_time(clock: &Clock, bet: &BetProposal): bool {
         clock.timestamp_ms() >= bet.payoff_time
+    }
+
+    public fun get_amount_to_accept_bet(bet: &BetProposal): u64 {
+        bet.stake * bet.coefficient
     }
 }
