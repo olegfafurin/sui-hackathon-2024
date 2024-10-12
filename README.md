@@ -1,4 +1,4 @@
-# Sui x BSA 2024 dApp Starter Template
+# There will be a Betting App project for BSA 2024
 
 Welcome to the [BSA](https://bsaepfl.ch/) x [SUI](https://sui.io/) Hackathon Official Starter Pack ! This kit should provide you with tons of tools to make your hackathon experience seamless and easy, so ou can focus on what you do best ! 
 
