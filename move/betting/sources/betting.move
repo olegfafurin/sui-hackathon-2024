@@ -7,13 +7,15 @@ module betting::betting {
 
     use std::string;
     use sui::clock::Clock;
+    use sui::sui::SUI;
+    use sui::coin::Coin;
 
     /// Structure representing a bet proposal
     public struct BetProposal has key, store {
         id: sui::object::UID,
         image_url: string::String,      // URL to the image representing the bet
         description: string::String,    // Description of the bet
-        stake: u64,                     // Desired sum of the stake
+        c: Coin<SUI>,                         // Desired sum of the stake
         coefficient: u64,               // Real-valued coefficient for the bet
         expiry_time: u64,               // Expiry time of the bet as a timestamp
         payoff_time: u64,               // Payoff time as a timestamp
@@ -26,7 +28,7 @@ module betting::betting {
         clock: &Clock,
         image_url: string::String,
         description: string::String,
-        stake: u64,
+        c: Coin<SUI>,
         coefficient: u64,
         expiry_time: u64,
         payoff_time: u64,
@@ -41,7 +43,7 @@ module betting::betting {
             id: object::new(ctx),
             image_url,
             description,
-            stake,
+            c,
             coefficient,
             expiry_time,
             payoff_time,
@@ -61,6 +63,11 @@ module betting::betting {
     }
 
     public fun get_amount_to_accept_bet(bet: &BetProposal): u64 {
-        bet.stake * bet.coefficient
+        bet.c.value() * bet.coefficient
     }
+
+    public fun get_bet_creator_address(bet: &BetProposal): address {
+        bet.address_of_bet_creator
+    }
+    
 }

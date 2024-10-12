@@ -3,6 +3,7 @@ module betting::contract {
     use sui::coin::Coin;
     use betting::betting::BetProposal;
     use sui::sui::SUI;
+    use sui::coin::split;
 
     /// Structure representing a bet contract
     public struct BetContract has key, store {
@@ -34,9 +35,14 @@ module betting::contract {
 
 
 
+    public fun pay_out(contract: BetContract, winner: address, broker: address, commission_percentage: u64, ctx: &mut tx_context::TxContext,) {
+        let total_value = contract.c.value();
+        let commission = total_value * commission_percentage / 100;
 
-
-
-
-
+        let commission_coin = split(&mut contract.c, commission, ctx);
+        let winnings_coin = split(&mut contract.c, total_value - commission, ctx);
+        
+        transfer::public_transfer(commission_coin, broker);
+        transfer::public_transfer(winnings_coin, winner);
+    }
 }
