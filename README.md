@@ -1,6 +1,6 @@
 # There will be a Betting App project for BSA 2024
 
-welcome to the [BSA](https://bsaepfl.ch/) x [SUI](https://sui.io/) Hackathon Official Starter Pack ! This kit should provide you with tons of tools to make your hackathon experience seamless and easy, so ou can focus on what you do best ! 
+Welcome to the [BSA](https://bsaepfl.ch/) x [SUI](https://sui.io/) Hackathon Official Starter Pack ! This kit should provide you with tons of tools to make your hackathon experience seamless and easy, so ou can focus on what you do best ! 
 
 This starter pack was made by BSA comitee member [Loris](https://github.com/Loris-EPFL), feel free to contact me for any questions, bug reports, etc...
 
