@@ -33,6 +33,8 @@ module betting::contract {
         }
     }
 
+    // function that returns a BetContract object so that it can be used in exchange.move
+
 
 
     public fun pay_out(contract: BetContract, winner: address, broker: address, commission_percentage: u64, ctx: &mut tx_context::TxContext,) {
