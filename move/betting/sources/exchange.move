@@ -17,41 +17,20 @@ module betting::exchange {
     //use sui::table::{Self, Table};
     //use betting::proposal::{BetProposal, newBetProposal};
 
-    // allows one to write ctx.sender() instead of tx_context::sender(ctx)
-    // use sui::tx_context::{Self, TxContext};
-
-    // capability that grants an owner the ability to collect profits
-    public struct ExchangeAdminCap has key { id: UID }
-
-    // each BetProposal is purchasable on the exchange
-    // the BetProposals are stored in a vector
-
-
     public struct Exchange has key {
         id: UID,
-        // proposalsByUser: Table<address, vector<BetProposal>>,
-        // contractsByUser: Table<address, vector<BetContract>>,
         v_proposals: vector<BetProposal>,
         v_validBets: vector<BetContract>,
-        // balance: Balance<SUI>,
     }
 
-    fun init(ctx: &mut TxContext) {
-        // Transfers the ExchangeAdminCap to the sender (publisher).
-        transfer::transfer(ExchangeAdminCap {
-            id: object::new(ctx)
-        }, ctx.sender());
-
-        // Shares the Exchange object to make it accessible to everyone.
-        transfer::share_object(Exchange {
+    public fun newExchange(ctx: &mut TxContext): Exchange {
+        Exchange {
             id: object::new(ctx),
-            // proposalsByUser: table::new<address, vector<BetContract>>(ctx),
-            // contractsByUser: table::new<address, vector<BetContract>>(ctx),
-            v_proposals: vector::empty<BetProposal>(),
-            v_validBets: vector::empty<BetContract>(),
-            //balance: balance::zero(),
-        });
+            v_proposals: vector::empty(),
+            v_validBets: vector::empty(),
+        }
     }
+
 
     public fun proposeBet(
         ctx: &mut TxContext, 
@@ -93,31 +72,5 @@ module betting::exchange {
         vector::push_back(&mut exchange.v_validBets, valid_contract);
 
     }
-
-    /* 
-
-    
-    public fun retractBet(ctx: &mut TxContext, exchange: &mut Exchange, bp: &mut BetProposal): bool {
-        //assert!(ctx.sender() == bp.address_of_bet_creator, 1);
-        assert!(ctx.sender() == betting::proposal::get_address_of_bet_creator(bp), 1);
-
-        let len = vector::length(exchange.v_proposals);
-        let mut i = 0;
-        while (i < len) {
-            let elem_ref = vector::borrow(exchange.v_proposals, i);
-            if (elem_ref == bp) {
-                vector::remove(exchange.v_proposals, i);
-                object::delete(bp.id);
-                return true;
-            };
-            i = i + 1;
-        };
-        return false;
-    }
-
-    // public fun acceptBet(ctx: &mut TxContext, exchange: &mut Exchange, bp: &mut BetProposal) {}
-
-    */
-
 
 }
