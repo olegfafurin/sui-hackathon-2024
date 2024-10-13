@@ -53,6 +53,28 @@ module betting::exchange {
         });
     }
 
+    public fun proposeBet(
+        ctx: &mut TxContext, 
+        exchange: &mut Exchange, 
+        description: std::string::String,
+        c: Coin<SUI>, 
+        coefficient: u64,
+        expiry_time: u64,
+        payoff_time: u64,
+        clock: &Clock, 
+        address_of_bet_creator: address
+    ) {
+
+        assert!(expiry_time > clock.timestamp_ms(), 11);
+        // Ensure payoff time is after expiry time
+        assert!(payoff_time > expiry_time, 12);
+
+        let bp = betting::proposal::make_proposal(ctx, clock, description, c, coefficient, expiry_time, payoff_time, address_of_bet_creator); 
+
+        exchange.v_proposals.push_back(bp);
+
+    }
+
     // equivalent to 'buy_donut' in examples::donuts
     public fun acceptBet(exchange: &mut Exchange, c: Coin<SUI>, ctx: &mut TxContext, proposal_idx: u64, address_of_bet_taker: address, clock: &Clock) {
         let len = vector::length(&exchange.v_proposals);
@@ -74,32 +96,6 @@ module betting::exchange {
 
     /* 
 
-    public fun proposeBet(ctx: &mut TxContext,
-                          exchange: &mut Exchange,
-                          image_url: string::String,
-                          description: string::String,
-                          c: Coin<SUI>,
-                          coefficient: u64,
-                          expiry_time: u64,
-                          payoff_time: u64): BetProposal {
-
-        assert!(expiry_time > clock.timestamp_ms(), 1);
-        // Ensure payoff time is after expiry time
-        assert!(payoff_time > expiry_time, 2);
-
-        let bp = BetProposal {
-            id: object::new(ctx),
-            image_url,
-            description,
-            c,
-            coefficient,
-            expiry_time,
-            payoff_time,
-            address_of_bet_creator: ctx.sender(),
-        };
-        exchange.v_proposals.add(bp);
-        return bp;
-    }
     
     public fun retractBet(ctx: &mut TxContext, exchange: &mut Exchange, bp: &mut BetProposal): bool {
         //assert!(ctx.sender() == bp.address_of_bet_creator, 1);

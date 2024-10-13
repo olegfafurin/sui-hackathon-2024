@@ -14,7 +14,6 @@ module betting::proposal {
     #[allow(lint(coin_field))]
     public struct BetProposal has key, store {
         id: sui::object::UID,
-        image_url: string::String,      // URL to the image representing the bet
         description: string::String,    // Description of the bet
         c: Coin<SUI>,                         // Desired sum of the stake
         coefficient: u64,               // Real-valued coefficient for the bet
@@ -27,7 +26,6 @@ module betting::proposal {
     public fun new(
         ctx: &mut tx_context::TxContext,
         clock: &Clock,
-        image_url: string::String,
         description: string::String,
         c: Coin<SUI>,
         coefficient: u64,
@@ -42,7 +40,6 @@ module betting::proposal {
 
         BetProposal {
             id: object::new(ctx),
-            image_url,
             description,
             c,
             coefficient,
@@ -52,6 +49,9 @@ module betting::proposal {
         }
     }
 
+    public fun make_proposal(ctx: &mut tx_context::TxContext, clock: &Clock, description: string::String, c: Coin<SUI>, coefficient: u64, expiry_time: u64, payoff_time: u64, address_of_bet_creator: address): BetProposal {
+        new(ctx, clock, description, c, coefficient, expiry_time, payoff_time, address_of_bet_creator)
+    }
     
     /// Function to check if the bet proposal has expired
     public fun is_expired(clock: &Clock, bet: &BetProposal): bool {
