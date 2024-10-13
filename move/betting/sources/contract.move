@@ -6,6 +6,7 @@ module betting::contract {
     use sui::coin::split;
 
     /// Structure representing a bet contract
+    #[allow(lint(coin_field))]
     public struct BetContract has key, store {
         id: sui::object::UID,
         proposal: BetProposal,
@@ -34,10 +35,13 @@ module betting::contract {
     }
 
     // function that returns a BetContract object so that it can be used in exchange.move
+    public fun make_contract(ctx: &mut tx_context::TxContext, clock: &Clock, proposal: BetProposal, address_of_bet_taker: address, c: Coin<SUI>): BetContract {
+        new(ctx, clock, proposal, address_of_bet_taker, c)
+    }
 
 
 
-    public fun pay_out(contract: BetContract, winner: address, broker: address, commission_percentage: u64, ctx: &mut tx_context::TxContext,) {
+    public fun pay_out(contract: &mut BetContract, winner: address, broker: address, commission_percentage: u64, ctx: &mut tx_context::TxContext) {
         let total_value = contract.c.value();
         let commission = total_value * commission_percentage / 100;
 

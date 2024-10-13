@@ -1,3 +1,4 @@
+#[allow(unused_use)]
 module betting::exchange {
 
     // as in examples::donuts in online tutorial

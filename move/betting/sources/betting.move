@@ -11,6 +11,7 @@ module betting::proposal {
     use sui::coin::Coin;
 
     /// Structure representing a bet proposal
+    #[allow(lint(coin_field))]
     public struct BetProposal has key, store {
         id: sui::object::UID,
         image_url: string::String,      // URL to the image representing the bet
