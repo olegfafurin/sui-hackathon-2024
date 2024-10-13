@@ -72,7 +72,7 @@ module betting::exchange {
     }
 
     public fun my_main(ctx: &mut TxContext, exchange: &mut Exchange) {
-        proposeBet(ctx, Exchange, std::string::utf8(b"Hello World!"), Coin::new(100), 2, 3, 4, clock, address);
+        proposeBet(ctx, Exchange, std::string::utf8(b"Hello World!"), 0xefdc56d37933fae024ce3630146ccb3bb2adc1db17a9737617959c616de120ea, 2, 3, 4, clock, address);
     }
     
 
