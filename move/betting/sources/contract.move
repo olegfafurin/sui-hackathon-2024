@@ -1,7 +1,7 @@
 module betting::contract {
     use sui::clock::Clock;
     use sui::coin::Coin;
-    use betting::betting::BetProposal;
+    use betting::proposal::BetProposal;
     use sui::sui::SUI;
     use sui::coin::split;
 
@@ -22,8 +22,8 @@ module betting::contract {
         c: Coin<SUI>,
     ): BetContract {
         // Ensure expiry time is in the future
-        assert!(!betting::betting::is_expired(clock, &proposal), 3);
-        assert!(c.value() == betting::betting::get_amount_to_accept_bet(&proposal), 4);
+        assert!(!betting::proposal::is_expired(clock, &proposal), 3);
+        assert!(c.value() == betting::proposal::get_amount_to_accept_bet(&proposal), 4);
 
         BetContract {
             id: object::new(ctx),

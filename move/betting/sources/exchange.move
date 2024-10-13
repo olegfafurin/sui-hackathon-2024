@@ -1,12 +1,14 @@
 module betting::exchange {
 
-    use betting::betting::{BetProposal, newBetProposal};
-    use sui::balance::{Self, Balance};
-    use sui::table::{Self, Table};
+    use betting::proposal::BetProposal;
+    use sui::balance::Balance;
+    use sui::table::Table;
     use sui::sui::SUI;
     use sui::coin::Coin;
     use sui::clock::Clock;
-    use std::vector;
+    //use sui::table::{Self, Table};
+    //use sui::balance::{Self, Balance};
+    //use betting::proposal::{BetProposal, newBetProposal};
 
     public struct ExchangeAdminCap has key, store { id: UID }
 
@@ -62,7 +64,8 @@ module betting::exchange {
     }
 
     public fun retractBet(ctx: &mut TxContext, exchange: &mut Exchange, bp: &mut BetProposal): bool {
-        assert!(ctx.sender() == bp.address_of_bet_creator, 1);
+        //assert!(ctx.sender() == bp.address_of_bet_creator, 1);
+        assert!(ctx.sender() == betting::proposal::get_address_of_bet_creator(bp), 1);
 
         let len = std::vector::length(exchange.proposals);
         let mut i = 0;

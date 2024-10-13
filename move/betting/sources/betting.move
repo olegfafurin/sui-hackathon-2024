@@ -1,9 +1,9 @@
 /*
 /// Module: betting
-module betting::betting;
+module betting::proposal;
 */
 
-module betting::betting {
+module betting::proposal {
 
     use std::string;
     use sui::clock::Clock;
@@ -69,5 +69,9 @@ module betting::betting {
     public fun get_bet_creator_address(bet: &BetProposal): address {
         bet.address_of_bet_creator
     }
-    
+
+    public fun get_address_of_bet_creator(bet: &BetProposal): address {
+        bet.address_of_bet_creator
+    }
+
 }
