@@ -1,37 +1,55 @@
 module betting::exchange {
 
-    use betting::proposal::BetProposal;
-    use sui::balance::Balance;
-    use sui::table::Table;
+    // as in examples::donuts in online tutorial
     use sui::sui::SUI;
-    use sui::coin::Coin;
+    use sui::coin::{Self, Coin};
+    use sui::object::{Self, UID};
+    use sui::balance::{Self, Balance};
+    use sui::tx_context::{Self, TxContext};
+
+    // personal imports
+    use betting::proposal::BetProposal;
+    use betting::contract::BetContract;
+    use sui::table::Table;
     use sui::clock::Clock;
+
+    //use sui::coin::Coin;
     //use sui::table::{Self, Table};
-    //use sui::balance::{Self, Balance};
     //use betting::proposal::{BetProposal, newBetProposal};
 
-    public struct ExchangeAdminCap has key, store { id: UID }
+
+    // for when Coin balance is too low
+    const ENotEnoughBalance: u64 = 0;
+
+    // capability that grants an owner the ability to collect profits
+    public struct ExchangeAdminCap has key { id: UID }
+
+    // each BetProposal is purchasable on the exchange
+    // the BetProposals are stored in a vector
+
 
     public struct Exchange has key {
         id: UID,
         // proposalsByUser: Table<address, vector<BetProposal>>,
         // contractsByUser: Table<address, vector<BetContract>>,
-        proposals: vector<BetProposal>,
+        v_proposals: vector<BetProposal>,
+        validBets: vector<BetContract>,
         balance: Balance<SUI>,
     }
 
     fun init(ctx: &mut TxContext) {
-        // Transfers the ShopOwnerCap to the sender (publisher).
+        // Transfers the ExchangeAdminCap to the sender (publisher).
         transfer::transfer(ExchangeAdminCap {
             id: object::new(ctx)
         }, ctx.sender());
 
-        // Shares the Exchange object.
+        // Shares the Exchange object to make it accessible to everyone.
         transfer::share_object(Exchange {
             id: object::new(ctx),
             // proposalsByUser: table::new<address, vector<BetContract>>(ctx),
             // contractsByUser: table::new<address, vector<BetContract>>(ctx),
-            proposals: vector<BetProposal>,
+            v_proposals: vector::empty<BetProposal>(),
+            validBets: vector::empty<BetContract>(),
             balance: balance::zero(),
         });
     }
@@ -59,7 +77,7 @@ module betting::exchange {
             payoff_time,
             address_of_bet_creator: ctx.sender(),
         };
-        exchange.proposals.add(bp);
+        exchange.v_proposals.add(bp);
         return bp;
     }
 
@@ -67,12 +85,12 @@ module betting::exchange {
         //assert!(ctx.sender() == bp.address_of_bet_creator, 1);
         assert!(ctx.sender() == betting::proposal::get_address_of_bet_creator(bp), 1);
 
-        let len = std::vector::length(exchange.proposals);
+        let len = vector::length(exchange.v_proposals);
         let mut i = 0;
         while (i < len) {
-            let elem_ref = std::vector::borrow(exchange.proposals, i);
+            let elem_ref = vector::borrow(exchange.v_proposals, i);
             if (elem_ref == bp) {
-                std::vector::remove(exchange.proposals, i);
+                vector::remove(exchange.v_proposals, i);
                 object::delete(bp.id);
                 return true;
             };
